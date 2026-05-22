@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red de Estudiantes y Profesionales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .card-enter {
+            animation: fadeIn 0.4s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Custom scrollbar para las descripciones */
+        .desc-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .desc-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        .desc-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        .desc-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6">
+            <div class="text-center">
+                <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight mb-1 drop-shadow-sm">
+                    <i class="fa-solid fa-network-wired mr-2"></i>Red de Estudiantes
+                </h1>
+                <p class="text-sm md:text-base text-indigo-100 max-w-3xl mx-auto font-light hidden sm:block">
+                    Conoce a tus compañeros y encuentra conexiones profesionales clave.
+                </p>
+            </div>
+            
+            <div class="mt-3 max-w-2xl mx-auto relative">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                    </div>
+                    <input type="text" id="searchInput" 
+                        class="block w-full pl-11 pr-12 py-2.5 border-0 rounded-full shadow-md text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-300 focus:outline-none text-base transition-shadow" 
+                        placeholder="Buscar por nombre, descripción o interés...">
+                    <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-pink-500 hidden transition-colors">
+                        <i class="fa-solid fa-circle-xmark text-lg"></i>
+                    </button>
+                </div>
+                <div class="mt-1.5 text-center text-xs text-indigo-100 font-medium h-4" id="searchStats">
+                    <!-- Estadísticas de búsqueda -->
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <div id="studentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <!-- Las tarjetas se inyectarán aquí vía JavaScript -->
+        </div>
+        
+        <div id="noResults" class="hidden text-center py-20">
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-slate-200 text-slate-400 mb-6">
+                <i class="fa-solid fa-user-slash text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-700 mb-2">No se encontraron coincidencias</h3>
+            <p class="text-slate-500">Intenta buscar con otros términos o haz clic en las etiquetas de los perfiles.</p>
+            <button onclick="clearSearchFilter()" class="mt-6 px-6 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition-colors shadow-md font-medium">
+                Ver todos los estudiantes
+            </button>
+        </div>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6 text-center mt-auto">
+        <p class="text-sm">
+            <i class="fa-solid fa-users text-pink-500 mr-2"></i> Directorio Interactivo de Estudiantes y Profesionales
+        </p>
+    </footer>
+
+    <script>
+        // Base de datos de estudiantes enriquecida con etiquetas de red (Networking tags)
+        const students = [
+            {
+                name: "Romina Zarate",
+                profession: "Lic. en Trabajo Social",
+                description: "Actualmente me desempeño en la Dirección Asesoría Previsional de Jefatura de Policía. Además, este mes que aprobé mi tesis de maestría en Abordaje Familiar Integral.",
+                tags: ["Trabajo Social", "Fuerzas de Seguridad", "Familia"]
+            },
+            {
+                name: "Angela Niveyro Kayler",
+                profession: "Lic. en Trabajo Social",
+                description: "Actualmente me encuentro trabajando en el departamento de niñez, adolescencia y familia de la municipalidad de Oberá, en esta oportunidad estoy desarrollando funciones de responsable de un dispositivo convivencial.",
+                tags: ["Trabajo Social", "Niñez y Familia", "Gestión Municipal", "Oberá"]
+            },
+            {
+                name: "Gabriela Enciso",
+                profession: "Lic. en Trabajo Social",
+                description: "Maestranda en Políticas Sociales en la fhycs (en proceso de tesis). Especialista en Salud Mental. Jefa de Residentes en el Hospital Carrillo, en fusión con el Centro de adicciones e incorporando el Hospital Baliña.",
+                tags: ["Trabajo Social", "Salud Mental", "Adicciones", "Salud Pública"]
+            },
+            {
+                name: "Silvia Mantulak",
+                profession: "Lic. en Trabajo Social",
+                description: "Estoy trabajando en el ámbito institucional en la Municipalidad de San José.",
+                tags: ["Trabajo Social", "Gestión Municipal"]
+            },
+            {
+                name: "Miriam Schlesinger",
+                profession: "Lic. en Trabajo Social",
+                description: "Graduada En la UNaM, me encuentro trabajando en el ámbito de la Modalidad Domiciliaria y Hospitalaria en la Coordinación Provincial y como equipo de orientación escolar en la Escuela de esta modalidad en la localidad de L.N.Alem.",
+                tags: ["Trabajo Social", "Educación", "Salud Pública"]
+            },
+            {
+                name: "Garcia Gisela",
+                profession: "Lic. en Trabajo Social",
+                description: "Actualmente me desempeño en la Dirección de Niñez de la municipalidad de Eldorado, dentro del equipo interdisciplinario.",
+                tags: ["Trabajo Social", "Niñez y Familia", "Gestión Municipal", "Equipos Interdisciplinarios"]
+            },
+            {
+                name: "Arrúa María de los Ángeles",
+                profession: "Lic. en Trabajo Social",
+                description: "Actualmente resido en la ciudad de Oberá. Me encuentro trabajando en el Departamento de Niñez, Adolescencia y Familia.",
+                tags: ["Trabajo Social", "Niñez y Familia", "Oberá"]
+            },
+            {
+                name: "Delgado Claudia",
+                profession: "Prof. de Lengua y Literatura",
+                description: "Con 16 años de antigüedad, de 1ro a 5to año en el CPES N°46 de El Calafate, Santa Cruz.",
+                tags: ["Educación", "Docencia"]
+            },
+            {
+                name: "Rosalina Villar",
+                profession: "Gestión Jurídica / Educación",
+                description: "Me desempeño en cuestiones jurídicas en una Institución del Estado (IPS) y por la tarde (a veces) soy parte de un equipo interdisciplinario en Escuelas Primarias.",
+                tags: ["Ámbito Jurídico", "Educación", "Equipos Interdisciplinarios"]
+            },
+            {
+                name: "Rocio Benitez",
+                profession: "Prof. en Educación Especial",
+                description: "Actualmente me encuentro realizando actividades relacionadas con mi formación y capacidad profesional.",
+                tags: ["Educación", "Docencia", "Educación Especial"]
+            },
+            {
+                name: "Johana Bacik",
+                profession: "Lic. en Trabajo Social",
+                description: "Hace varios años que no estoy ejerciendo por motivos personales, Trabajó en Desarrollo Social de Las Lajas, localidad de la provincia de Neuquén.",
+                tags: ["Trabajo Social", "Desarrollo Social"]
+            },
+            {
+                name: "María Juliana Lozano",
+                profession: "Lic. en Psicología",
+                description: "Profesora Universitaria y cuento con una diplomatura en Psicología Educacional. Actualmente trabajo desde la psicología clínica en consultorio privado y como adscripta profesional en la Universidad de la Cuenca del Plata.",
+                tags: ["Psicología", "Educación", "Salud Mental", "Docencia"]
+            },
+            {
+                name: "Antonella Schenone",
+                profession: "Lic. en Trabajo Social",
+                description: "Vivo en Resistencia-Chaco. Me desempeño laboralmente en Osprera, obra social rural y en el Ministerio de desarrollo humano de la provincia.",
+                tags: ["Trabajo Social", "Desarrollo Social", "Salud Pública"]
+            },
+            {
+                name: "Carolina Correa",
+                profession: "Lic. en Trabajo Social",
+                description: "Desempeño en Gendarmería Nacional en San Vicente Misiones (área de género, prevención de riesgo/suicidio). Acompañamiento a retirados. Charlas comunitarias gratuitas en colegios secundarios sobre problemáticas adolescentes.",
+                tags: ["Trabajo Social", "Fuerzas de Seguridad", "Salud Mental", "Educación", "Género"]
+            }
+        ];
+
+        const gradients = [
+            'from-blue-400 to-indigo-500',
+            'from-emerald-400 to-teal-500',
+            'from-orange-400 to-red-500',
+            'from-pink-400 to-rose-500',
+            'from-purple-400 to-fuchsia-500',
+            'from-cyan-400 to-blue-500',
+            'from-amber-400 to-orange-500'
+        ];
+
+        // Mapa de colores específicos para las áreas más comunes para mantener coherencia visual
+        const tagColors = {
+            "Trabajo Social": "bg-indigo-100 text-indigo-800 hover:bg-indigo-200 border-indigo-200",
+            "Educación": "bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-200",
+            "Salud Mental": "bg-purple-100 text-purple-800 hover:bg-purple-200 border-purple-200",
+            "Niñez y Familia": "bg-pink-100 text-pink-800 hover:bg-pink-200 border-pink-200",
+            "Gestión Municipal": "bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200",
+            "Fuerzas de Seguridad": "bg-slate-200 text-slate-800 hover:bg-slate-300 border-slate-300",
+            "Equipos Interdisciplinarios": "bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200",
+            "Salud Pública": "bg-cyan-100 text-cyan-800 hover:bg-cyan-200 border-cyan-200",
+            "Desarrollo Social": "bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200"
+        };
+
+        function getInitials(name) {
+            return name.split(' ').slice(0, 2).map(n => n[0]).join('').toUpperCase();
+        }
+
+        function getGradient(name) {
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = name.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return gradients[Math.abs(hash) % gradients.length];
+        }
+
+        function removeAccents(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
+        function filterByTag(tag) {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.value = tag;
+            renderStudents(tag);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderStudents(filterText = '') {
+            const grid = document.getElementById('studentsGrid');
+            const noResults = document.getElementById('noResults');
+            const clearBtn = document.getElementById('clearSearch');
+            const searchStats = document.getElementById('searchStats');
+            
+            grid.innerHTML = '';
+            const normalizedFilter = removeAccents(filterText.trim());
+            
+            // Lógica de filtrado integral (Nombre, Profesión, Descripción, Etiquetas)
+            const filteredStudents = students.filter(student => {
+                if (!normalizedFilter) return true;
+                
+                const searchString = removeAccents(
+                    `${student.name} ${student.profession} ${student.description} ${student.tags.join(' ')}`
+                );
+                return searchString.includes(normalizedFilter);
+            });
+
+            // Visibilidad del botón "limpiar" y estadísticas
+            clearBtn.style.display = filterText ? 'flex' : 'none';
+            searchStats.innerHTML = filterText 
+                ? `Encontrados ${filteredStudents.length} perfiles relacionados con "<b>${filterText}</b>"` 
+                : `Mostrando ${students.length} perfiles de la red`;
+
+            if (filteredStudents.length === 0) {
+                grid.classList.add('hidden');
+                noResults.classList.remove('hidden');
+                return;
+            }
+
+            grid.classList.remove('hidden');
+            noResults.classList.add('hidden');
+
+            filteredStudents.forEach((student, index) => {
+                const gradient = getGradient(student.name);
+                const initials = getInitials(student.name);
+                
+                // Construcción de los HTML de los tags
+                const tagsHtml = student.tags.map(tag => {
+                    const colorClass = tagColors[tag] || "bg-gray-100 text-gray-700 hover:bg-gray-200 border-gray-200";
+                    return `<span onclick="filterByTag('${tag}')" class="${colorClass} border inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold cursor-pointer transition-transform hover:scale-105 active:scale-95 shadow-sm">
+                                <i class="fa-solid fa-hashtag mr-1 opacity-50"></i>${tag}
+                            </span>`;
+                }).join('');
+
+                const card = document.createElement('div');
+                card.className = `bg-white rounded-2xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full card-enter`;
+                card.style.animationDelay = `${index * 0.05}s`;
+
+                card.innerHTML = `
+                    <div class="h-2 bg-gradient-to-r ${gradient}"></div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <!-- Cabecera de Tarjeta -->
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="flex-shrink-0 w-14 h-14 rounded-full bg-gradient-to-tr ${gradient} flex items-center justify-center text-white font-bold text-xl shadow-inner">
+                                ${initials}
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-800 leading-tight">${student.name}</h2>
+                                <p class="text-sm font-medium text-pink-600 mt-1 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-briefcase opacity-75"></i> ${student.profession}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <div class="bg-slate-50 rounded-xl p-4 mb-4 flex-grow relative group border border-slate-100">
+                            <i class="fa-solid fa-quote-left absolute top-3 left-3 text-slate-200 text-2xl z-0"></i>
+                            <p class="text-slate-600 text-sm leading-relaxed relative z-10 pl-6 desc-scroll h-[100px] overflow-y-auto">
+                                ${student.description}
+                            </p>
+                        </div>
+
+                        <!-- Red de Conexiones (Tags) -->
+                        <div class="mt-auto pt-2 border-t border-slate-100">
+                            <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-2 flex items-center gap-1">
+                                <i class="fa-solid fa-diagram-project"></i> Red de coincidencias
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                ${tagsHtml}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        
+        searchInput.addEventListener('input', (e) => {
+            renderStudents(e.target.value);
+        });
+
+        function clearSearchFilter() {
+            searchInput.value = '';
+            renderStudents();
+            searchInput.focus();
+        }
+
+        document.getElementById('clearSearch').addEventListener('click', clearSearchFilter);
+
+        // Renderizado inicial
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStudents();
+        });
+    </script>
+</body>
+</html>
