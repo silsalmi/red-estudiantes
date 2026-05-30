@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Red de Estudiantes y Profesionales</title>
+    
+    <!-- Enlaces actualizados a CDNs para que funcione sin archivos locales -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -58,23 +62,19 @@
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
                     </div>
-                    <input type="text" id="searchInput" 
-                        class="block w-full pl-11 pr-12 py-2.5 border-0 rounded-full shadow-md text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-300 focus:outline-none text-base transition-shadow" 
-                        placeholder="Buscar por nombre, descripción o interés...">
-                    <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-pink-500 hidden transition-colors">
+                    <input type="text" id="searchInput" class="block w-full pl-11 pr-12 py-2.5 border-0 rounded-full shadow-md text-slate-800 placeholder-slate-400 focus:ring-4 focus:ring-pink-300 focus:outline-none text-base transition-shadow" placeholder="Buscar por nombre, descripción o interés...">
+                    <button id="clearSearch" class="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-pink-500 hidden transition-colors" style="display: none;">
                         <i class="fa-solid fa-circle-xmark text-lg"></i>
                     </button>
                 </div>
-                <div class="mt-1.5 text-center text-xs text-indigo-100 font-medium h-4" id="searchStats">
-                    <!-- Estadísticas de búsqueda -->
-                </div>
+                <div class="mt-1.5 text-center text-xs text-indigo-100 font-medium h-4" id="searchStats">Cargando perfiles...</div>
             </div>
         </div>
     </header>
 
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <!-- El contenedor está vacío porque las tarjetas se generarán dinámicamente con JavaScript -->
         <div id="studentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <!-- Las tarjetas se inyectarán aquí vía JavaScript -->
         </div>
         
         <div id="noResults" class="hidden text-center py-20">
@@ -101,7 +101,7 @@
             {
                 name: "Romina Zarate",
                 profession: "Lic. en Trabajo Social",
-                description: "Actualmente me desempeño en la Dirección Asesoría Previsional de Jefatura de Policía. Además, este mes que aprobé mi tesis de maestría en Abordaje Familiar Integral.",
+                description: "Actualmente me desempeño en la Dirección Asesoría Previsional de Jefatura de Policía. Además, este mes aprobé mi tesis de maestría en Abordaje Familiar Integral.",
                 tags: ["Trabajo Social", "Fuerzas de Seguridad", "Familia"]
             },
             {
@@ -113,14 +113,14 @@
             {
                 name: "Gabriela Enciso",
                 profession: "Lic. en Trabajo Social",
-                description: "Maestranda en Políticas Sociales en la fhycs (en proceso de tesis). Especialista en Salud Mental. Jefa de Residentes en el Hospital Carrillo, en fusión con el Centro de adicciones e incorporando el Hospital Baliña.",
+                description: "Maestranda en Políticas Sociales en la fhycs (en proceso de tesis). Especialista en Salud Mental habiendo cursado una residencia de tres años. Jefa de Residentes en el Hospital Carrillo, en fusión con el Centro de adicciones e incorporando el Hospital Baliña.",
                 tags: ["Trabajo Social", "Salud Mental", "Adicciones", "Salud Pública"]
             },
             {
                 name: "Silvia Mantulak",
                 profession: "Lic. en Trabajo Social",
-                description: "Estoy trabajando en el ámbito institucional en la Municipalidad de San José.",
-                tags: ["Trabajo Social", "Gestión Municipal"]
+                description: "Estoy trabajando en el ámbito institucional en la Municipalidad de San José. Además, me encuentro trabajando en mi TFI sobre las problemáticas sociales vinculadas a la vulnerabilidad socioeconómica de familias del municipio.",
+                tags: ["Trabajo Social", "Gestión Municipal", "Familia"]
             },
             {
                 name: "Miriam Schlesinger",
@@ -181,6 +181,25 @@
                 profession: "Lic. en Trabajo Social",
                 description: "Desempeño en Gendarmería Nacional en San Vicente Misiones (área de género, prevención de riesgo/suicidio). Acompañamiento a retirados. Charlas comunitarias gratuitas en colegios secundarios sobre problemáticas adolescentes.",
                 tags: ["Trabajo Social", "Fuerzas de Seguridad", "Salud Mental", "Educación", "Género"]
+            },
+            // --- NUEVOS ESTUDIANTES AGREGADOS ---
+            {
+                name: "Cristina Maderna",
+                profession: "Lic. en Trabajo Social",
+                description: "Me gradué hace 1 año en la UBA. También me formé como Técnica en Tiempo Libre y Recreación, y he realizado cursos en relación a niñez, adultos mayores, estimulación cognitiva y políticas públicas sociales. Me desempeño como Supervisora en el Programa Juegotecas Barriales (CABA).",
+                tags: ["Trabajo Social", "Niñez y Familia", "Educación", "Gestión Municipal"]
+            },
+            {
+                name: "Rosana Montero",
+                profession: "Lic. en Trabajo Social",
+                description: "Trabajo en una escuela especial, integrando el EdAyO en un CET, realizando actividades afines junto al equipo terapéutico. Hace muchos años trabajo también en un centro de diálisis, en forma interdisciplinaria.",
+                tags: ["Trabajo Social", "Educación", "Equipos Interdisciplinarios", "Salud Pública"]
+            },
+            {
+                name: "Romina I. Caseres",
+                profession: "Fuerzas de Seguridad",
+                description: "Mi enfoque actual es trabajar en la Institución policial sobre la problemática del aumento de casos de personal policial en situación de retiro que padecen enfermedades crónicas.",
+                tags: ["Fuerzas de Seguridad", "Salud Pública", "Investigación"]
             }
         ];
 
@@ -204,7 +223,9 @@
             "Fuerzas de Seguridad": "bg-slate-200 text-slate-800 hover:bg-slate-300 border-slate-300",
             "Equipos Interdisciplinarios": "bg-teal-100 text-teal-800 hover:bg-teal-200 border-teal-200",
             "Salud Pública": "bg-cyan-100 text-cyan-800 hover:bg-cyan-200 border-cyan-200",
-            "Desarrollo Social": "bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200"
+            "Desarrollo Social": "bg-orange-100 text-orange-800 hover:bg-orange-200 border-orange-200",
+            "Familia": "bg-rose-100 text-rose-800 hover:bg-rose-200 border-rose-200",
+            "Investigación": "bg-blue-100 text-blue-800 hover:bg-blue-200 border-blue-200"
         };
 
         function getInitials(name) {
